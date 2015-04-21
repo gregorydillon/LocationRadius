@@ -2,6 +2,10 @@
 // SODA within_box query, pulling data for the current map view from a Socrata dataset
 
   //initialize the leaflet map, set options, view, and basemap
+  
+  
+  
+  
   var map = L.map('map', {
       zoomControl: false,
       
@@ -48,15 +52,20 @@
     console.log(bbox);
 
     //within_box() expects a bounding box that looks like: topLeftLat,topLeftLon,bottomRightLat,bottomRightLon, so we need to reorder the coordinates leaflet returned
-    var sodaQueryBox = [
-      bbox._northEast.lat, 
-      bbox._southWest.lng, 
-      bbox._southWest.lat, 
-      bbox._northEast.lng
-    ];
+    // var sodaQueryBox = [
+    //   bbox._northEast.lat, 
+    //   bbox._southWest.lng, 
+    //   bbox._southWest.lat, 
+    //   bbox._northEast.lng
+    // ];
 
-    //use jQuery's getJSON() to call the SODA API for NYC 311
-    $.getJSON(buildQuery(sevenDaysAgo, sodaQueryBox), function(data) {
+    var sodaQueryCircle = [
+      37.78,
+      -122.41,
+      200];
+
+    //use jQuery's getJSON() to call the SODA API for SF311
+    $.getJSON(buildQuery(sevenDaysAgo, sodaQueryCircle), function(data) {
 
       //iterate over each 311 complaint, add a marker to the map
       for (var i = 0; i < data.length; i++) {
@@ -89,10 +98,10 @@
   }
 
   //assemble a valid SODA API call using within_box() and opened>{a week ago}
-  function buildQuery(sevenDaysAgo, sodaQueryBox) {
+  function buildQuery(sevenDaysAgo, sodaQueryCircle) {
     var query =
       "https://data.sfgov.org/resource/gntf-qmc7.json?$select=point,closed,opened,status,case_id,address&$where=opened>'" +
-      sevenDaysAgo + "' AND within_box(point," + sodaQueryBox +
+      sevenDaysAgo + "' AND within_circle(point," + sodaQueryCircle +
       ")&$order=opened desc";
 
     console.log(query);
