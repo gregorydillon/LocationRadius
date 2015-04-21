@@ -11,7 +11,7 @@
       
       scrollWheelZoom: false
     })
-    .setView([37.76, -122.45], 14);
+    .setView([37.760693, -122.418475], 15);
 
   L.tileLayer(
     'http://openmapsurfer.uni-hd.de/tiles/roadsg/x={x}&y={y}&z={z}', {
@@ -34,11 +34,6 @@
     + cleanDate((sevenDaysAgo.getMonth() + 1)) + '-' 
     + cleanDate((sevenDaysAgo.getDate() + 1));
 
-  //call getData() and show spinner when the map is dragged
-  map.on('dragend', function(e) {
-    $('#spinnerBox').fadeIn();
-    getData();
-  });
 
   //call getData() once
   getData();
@@ -47,22 +42,8 @@
     //clear markers before getting new ones
     markers.clearLayers();
 
-    //get map bounds from Leaflet.  getBounds() returns an object
-    var bbox = map.getBounds();
-    console.log(bbox);
 
-    //within_box() expects a bounding box that looks like: topLeftLat,topLeftLon,bottomRightLat,bottomRightLon, so we need to reorder the coordinates leaflet returned
-    // var sodaQueryBox = [
-    //   bbox._northEast.lat, 
-    //   bbox._southWest.lng, 
-    //   bbox._southWest.lat, 
-    //   bbox._northEast.lng
-    // ];
-
-    var sodaQueryCircle = [
-      37.78,
-      -122.41,
-      200];
+    var sodaQueryCircle = "37.760693, -122.418475,200";
 
     //use jQuery's getJSON() to call the SODA API for SF311
     $.getJSON(buildQuery(sevenDaysAgo, sodaQueryCircle), function(data) {
@@ -82,7 +63,7 @@
           });
 
         markerItem.bindPopup(
-          '<h4>' + marker.complaint_type + '</h4>' 
+          '<h4>' + marker.status + '</h4>' 
           + (new Date(marker.opened)).toDateString() 
           + ((marker.address != null) ? '<br/>' + marker.address : '')
         );
